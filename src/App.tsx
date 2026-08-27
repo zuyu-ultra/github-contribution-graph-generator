@@ -19,6 +19,11 @@ import {
 
 const HISTORY_LIMIT = 60
 
+const GITHUB_PROFILE = 'https://github.com/zuyu-ultra'
+const GITHUB_REPOSITORY = 'https://github.com/zuyu-ultra/github-contribution-graph-generator'
+const CONTRIBUTION_DOCS =
+  'https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference'
+
 function useSystemTheme(): Theme {
   const [theme, setTheme] = useState<Theme>(() =>
     typeof matchMedia === 'function' && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
@@ -211,8 +216,8 @@ export default function App() {
     document.documentElement.dataset.theme = theme
     document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en'
     document.title = language === 'zh'
-      ? 'GitHub 贡献图工作台'
-      : 'GitHub Contribution Studio'
+      ? 'Kusa — 画你的 GitHub 贡献图'
+      : 'Kusa — Draw your GitHub contribution graph'
   }, [theme, language])
 
   // --- derived --------------------------------------------------------------
@@ -299,7 +304,7 @@ export default function App() {
           </div>
 
           <div className="header-actions">
-            <a className="header-link" href="https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference" target="_blank" rel="noreferrer">
+            <a className="header-link" href={CONTRIBUTION_DOCS} target="_blank" rel="noreferrer">
               {copy.docsLink}
             </a>
             <div className="segmented" role="group" aria-label={copy.languageLabel}>
@@ -315,7 +320,14 @@ export default function App() {
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <a className="icon-button" href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <a
+              className="icon-button"
+              href={GITHUB_PROFILE}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={copy.profileLink}
+              title={copy.profileLink}
+            >
               <Github size={16} />
             </a>
           </div>
@@ -425,7 +437,13 @@ export default function App() {
 
       <footer className="footer">
         <p>{copy.honesty}</p>
-        <span>{copy.footer}</span>
+        <div className="footer-meta">
+          <span>{copy.footer}</span>
+          <nav className="footer-links">
+            <a href={GITHUB_PROFILE} target="_blank" rel="noreferrer">{copy.profileLink}</a>
+            <a href={GITHUB_REPOSITORY} target="_blank" rel="noreferrer">{copy.sourceLink}</a>
+          </nav>
+        </div>
       </footer>
     </div>
   )

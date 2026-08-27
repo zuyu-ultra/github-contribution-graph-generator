@@ -102,12 +102,14 @@ export interface Copy {
   criteria: readonly string[]
   honesty: string
   footer: string
+  profileLink: string
+  sourceLink: string
 }
 
 export const COPY: Record<Language, Copy> = {
   en: {
     // shell
-    appName: 'Contribution Studio',
+    appName: 'Kusa',
     appTagline: 'Draw a GitHub contribution graph, export a script you can read.',
     localOnly: 'Runs entirely in your browser',
     docsLink: 'How GitHub counts contributions',
@@ -218,10 +220,12 @@ export const COPY: Record<Language, Copy> = {
     ],
     honesty: 'Backfilled commits do not represent real work. Use this on your own repositories, and be honest about it.',
     footer: 'Local-first. No uploads, no accounts, no tracking.',
+    profileLink: 'Built by zuyu-ultra',
+    sourceLink: 'Source',
   },
 
   zh: {
-    appName: '贡献图工作台',
+    appName: 'Kusa 种草',
     appTagline: '画一张 GitHub 贡献图，导出一份看得懂的脚本。',
     localOnly: '全部在浏览器本地运行',
     docsLink: 'GitHub 贡献计入规则',
@@ -328,6 +332,8 @@ export const COPY: Record<Language, Copy> = {
     ],
     honesty: '补写的提交并不代表真实工作量。请只在自己的仓库上使用，并如实说明。',
     footer: '本地优先。不上传、不注册、不追踪。',
+    profileLink: '由 zuyu-ultra 制作',
+    sourceLink: '源码',
   },
 }
 
