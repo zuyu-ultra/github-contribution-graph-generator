@@ -1,31 +1,90 @@
-# GitHub Contribution Graph Generator
+<div align="center">
 
-A local-first web tool for drawing a GitHub contribution heatmap and exporting a
-reviewable Bash script that creates the planned commits.
+<img src="docs/logo.png" width="72" height="72" alt="">
 
-The flow is three steps, top to bottom: **draw → configure → export**.
+# Kusa · 种草
+
+**Customise your GitHub contribution graph — backfill past commits, or draw
+words and images into the grid.**
+
+Kusa turns a picture into a Bash script that creates the commits behind it. You
+read the script, then you decide whether to run it. Nothing is uploaded — no
+passwords, no tokens, no repository settings, no images ever leave your browser.
+
+[Report an issue](https://github.com/zuyu-ultra/github-contribution-graph-generator/issues)
+· [How GitHub counts contributions](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference)
+
+<img src="docs/screenshot.png" alt="Kusa, with the word KUSA drawn into a year of contributions">
+
+</div>
+
+---
+
+## What it does
+
+The flow is three steps, top to bottom.
+
+1. **Draw** — paint the year's grid directly, or start from a pattern and adjust.
+2. **Configure** — point it at a repository, branch and date range.
+3. **Export** — read the generated script, copy or download it, run it yourself.
+
+The script clones your repository into a temp directory, creates empty commits
+with backdated `GIT_AUTHOR_DATE` / `GIT_COMMITTER_DATE` values, pushes, and cleans
+up after itself. It never handles credentials — the push uses whatever Git auth
+you already have.
 
 ## Features
 
-**Drawing**
+### Drawing
 
-- Paint the grid by clicking or dragging; hold <kbd>Alt</kbd> to erase
-- Five brush levels, selectable with <kbd>0</kbd>–<kbd>4</kbd>
-- Undo / redo (<kbd>⌘Z</kbd> / <kbd>⇧⌘Z</kbd>)
-- Patterns: natural, dense, weekdays, wave, ramp up
-- Write text into the graph with a built-in 5×7 pixel font, positioned live
-- Import an image and tune inversion and cut-off, sampled in your browser
+| | |
+|---|---|
+| Freehand | Click or drag across the grid; hold <kbd>Alt</kbd> to erase |
+| Brushes | Five shades, selectable with <kbd>0</kbd>–<kbd>4</kbd> |
+| History | Undo / redo, 60 steps |
+| Patterns | Natural, dense, weekdays, wave, ramp up |
+| Random | Roll a fresh, never-repeating year with one click |
+| Text | Write words into the graph with a built-in 5×7 pixel font, positioned live |
+| Images | Import a picture and tune inversion and cut-off, sampled in your browser |
 
-**Everything else**
+Text and image tools preview on the real grid before you commit them, so you can
+see exactly what you'll get.
+
+### Everything else
 
 - English and Chinese interface, matched to your browser on first run
 - Light and dark themes, following your system by default
-- Repository, branch, date range, timezone, commit identity and daily commit range
 - Timezone detected from your machine
-- Settings and drawing are kept in `localStorage` between visits
-- Copy or download a macOS/Linux-compatible Bash script
-- Skip dates that already have commits, so the script is safe to re-run
-- No passwords, tokens, repository settings, or images leave the page
+- Settings and drawing persist in `localStorage` between visits
+- Narrowing the date range never destroys your drawing — widen it and it comes back
+- Skip days that already have commits, so the script is safe to re-run
+
+### Keyboard
+
+| Key | Action |
+|---|---|
+| <kbd>0</kbd>–<kbd>4</kbd> | Select brush shade |
+| <kbd>Alt</kbd> + drag | Erase |
+| <kbd>R</kbd> | Roll a random year |
+| <kbd>⌘Z</kbd> / <kbd>Ctrl+Z</kbd> | Undo |
+| <kbd>⇧⌘Z</kbd> / <kbd>Ctrl+Shift+Z</kbd> | Redo |
+| <kbd>Esc</kbd> | Cancel the text or image tool |
+
+## How shades become commits
+
+Each cell holds a shade from 0 to 4. You set the commit count for shade 1 and
+shade 4; the shades in between are interpolated. With the default 1 → 4:
+
+| Shade | Commits |
+|---|---|
+| 0 | 0 — the day is skipped entirely |
+| 1 | 1 |
+| 2 | 2 |
+| 3 | 3 |
+| 4 | 4 |
+
+Commits within a day are spread across working hours so the history reads
+plausibly rather than landing at the same second.
 
 ## Run locally
 
@@ -37,24 +96,59 @@ npm run dev
 Build for production:
 
 ```bash
-npm run build
+npm run build      # type-checks, then emits dist/
+npm run preview    # serve the build locally
 ```
 
-## Authentication
+The build is a static bundle — `dist/` can be served from GitHub Pages, Netlify,
+Vercel, or any static host with no configuration.
 
-The generated script uses your existing Git credentials, SSH key, or GitHub CLI
-login. If needed, authenticate first:
+## Running the generated script
+
+```bash
+chmod +x generate-contributions.sh
+./generate-contributions.sh
+```
+
+It uses your existing Git credentials, SSH key, or GitHub CLI login. Authenticate
+first if you need to:
 
 ```bash
 gh auth login
 ```
 
-Use an author email verified on your GitHub account, and target the repository's
-default branch or `gh-pages` for contributions to appear on your profile.
+## What GitHub actually counts
 
-Review every generated script before running it. Backfilled commits do not
-represent real work — use this on your own repositories, and be honest about it.
+A commit shows up on your profile graph only when **all** of these hold:
+
+- the author email is verified on your GitHub account
+- the repository is not a fork
+- the commit is on the repository's default branch or `gh-pages`
+
+Use an author email linked to your account, and target the default branch. The
+graph can take a few minutes to refresh after a push.
+
+## A note on honesty
+
+Backfilled commits do not represent real work, and this tool does not pretend
+otherwise. Use it on your own repositories, for your own reasons — learning how
+Git dates work, making a graph you enjoy looking at, drawing something for fun.
+Don't use it to misrepresent your work to an employer or anyone else.
+
+Read every generated script before you run it. That is the whole reason the tool
+hands you a script instead of doing it for you.
+
+## Project layout
+
+```
+src/
+  lib/          date maths, heatmap model, pixel font, script generation, persistence
+  components/   Canvas, Toolbar, Settings, Export
+  i18n.ts       all interface copy, English and Chinese
+  App.tsx       state, history and layout
+public/         favicons
+```
 
 ## License
 
-MIT
+[MIT](LICENSE) © [zuyu-ultra](https://github.com/zuyu-ultra)

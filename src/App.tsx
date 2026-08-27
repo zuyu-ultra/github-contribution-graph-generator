@@ -8,7 +8,8 @@ import { COPY, detectLanguage, type Language } from './i18n'
 import { diffDays, toDate } from './lib/date'
 import { normalizeText } from './lib/font'
 import {
-  buildGrid, buildPattern, centerOffset, clip, maxTextLength, sampleImage, stampText, summarize,
+  buildDefaultDrawing, buildGrid, buildPattern, buildRandom, centerOffset, clip, maxTextLength,
+  sampleImage, stampText, summarize,
   type Heatmap, type Level, type Pattern,
 } from './lib/heatmap'
 import { generateScript } from './lib/script'
@@ -18,6 +19,13 @@ import {
 } from './lib/settings'
 
 const HISTORY_LIMIT = 60
+
+const BRAND_WORD = 'KUSA'
+
+const GITHUB_PROFILE = 'https://github.com/zuyu-ultra'
+const GITHUB_REPOSITORY = 'https://github.com/zuyu-ultra/github-contribution-graph-generator'
+const CONTRIBUTION_DOCS =
+  'https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference'
 
 function useSystemTheme(): Theme {
   const [theme, setTheme] = useState<Theme>(() =>
@@ -44,8 +52,11 @@ export default function App() {
   const copy = COPY[language]
 
   const [settings, setSettings] = useState<Settings>(restored.settings ?? defaultSettings())
-  const [map, setMap] = useState<Heatmap>(() =>
-    restored.map ?? buildPattern('natural', (restored.settings ?? defaultSettings()).start, (restored.settings ?? defaultSettings()).end))
+  const [map, setMap] = useState<Heatmap>(() => {
+    if (restored.map) return restored.map
+    const { start, end } = restored.settings ?? defaultSettings()
+    return buildDefaultDrawing(start, end, BRAND_WORD)
+  })
 
   const [past, setPast] = useState<Heatmap[]>([])
   const [future, setFuture] = useState<Heatmap[]>([])
@@ -55,6 +66,8 @@ export default function App() {
   const [copied, setCopied] = useState(false)
   const [downloaded, setDownloaded] = useState(false)
   const imageRef = useRef<HTMLImageElement | null>(null)
+  // Read by the keydown listener, so the shortcut never re-registers on every stroke.
+  const randomizeRef = useRef(() => {})
 
   const dayCount = useMemo(
     () => diffDays(toDate(settings.start), toDate(settings.end)) + 1,
@@ -175,6 +188,12 @@ export default function App() {
     commit(buildPattern(pattern, settings.start, settings.end))
   }
 
+  const randomize = () => {
+    cancelDraft()
+    commit(buildRandom(settings.start, settings.end))
+  }
+  randomizeRef.current = randomize
+
   const paintCell = (date: string, level: Level) => {
     setMap((current) => (current[date] === level ? current : { ...current, [date]: level }))
   }
@@ -194,6 +213,7 @@ export default function App() {
       }
       if (typing) return
       if (/^[0-4]$/.test(event.key)) setBrush(Number(event.key) as Level)
+      if (event.key.toLowerCase() === 'r') randomizeRef.current()
       if (event.key === 'Escape' && draft) cancelDraft()
     }
     window.addEventListener('keydown', onKeyDown)
@@ -211,8 +231,8 @@ export default function App() {
     document.documentElement.dataset.theme = theme
     document.documentElement.lang = language === 'zh' ? 'zh-CN' : 'en'
     document.title = language === 'zh'
-      ? 'GitHub 贡献图工作台'
-      : 'GitHub Contribution Studio'
+      ? 'Kusa — 画你的 GitHub 贡献图'
+      : 'Kusa — Draw your GitHub contribution graph'
   }, [theme, language])
 
   // --- derived --------------------------------------------------------------
@@ -278,7 +298,7 @@ export default function App() {
     clearState()
     cancelDraft()
     setSettings(fresh)
-    setMap(buildPattern('natural', fresh.start, fresh.end))
+    setMap(buildDefaultDrawing(fresh.start, fresh.end, BRAND_WORD))
     setPast([])
     setFuture([])
   }
@@ -299,7 +319,7 @@ export default function App() {
           </div>
 
           <div className="header-actions">
-            <a className="header-link" href="https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference" target="_blank" rel="noreferrer">
+            <a className="header-link" href={CONTRIBUTION_DOCS} target="_blank" rel="noreferrer">
               {copy.docsLink}
             </a>
             <div className="segmented" role="group" aria-label={copy.languageLabel}>
@@ -315,7 +335,14 @@ export default function App() {
             >
               {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
             </button>
-            <a className="icon-button" href="https://github.com" target="_blank" rel="noreferrer" aria-label="GitHub">
+            <a
+              className="icon-button"
+              href={GITHUB_PROFILE}
+              target="_blank"
+              rel="noreferrer"
+              aria-label={copy.profileLink}
+              title={copy.profileLink}
+            >
               <Github size={16} />
             </a>
           </div>
@@ -325,7 +352,7 @@ export default function App() {
       <main className="main">
         <div className="intro">
           <h1>{copy.appTagline}</h1>
-          <p>{copy.localOnly}</p>
+          <p>{copy.appSubtitle}</p>
         </div>
 
         <section className="card" aria-labelledby="step-draw">
@@ -352,6 +379,7 @@ export default function App() {
             onUndo={undo}
             onRedo={redo}
             onPattern={applyPattern}
+            onRandomize={randomize}
             draft={draft}
             onDraftChange={changeDraft}
             onOpenText={openTextDraft}
@@ -425,7 +453,13 @@ export default function App() {
 
       <footer className="footer">
         <p>{copy.honesty}</p>
-        <span>{copy.footer}</span>
+        <div className="footer-meta">
+          <span>{copy.footer}</span>
+          <nav className="footer-links">
+            <a href={GITHUB_PROFILE} target="_blank" rel="noreferrer">{copy.profileLink}</a>
+            <a href={GITHUB_REPOSITORY} target="_blank" rel="noreferrer">{copy.sourceLink}</a>
+          </nav>
+        </div>
       </footer>
     </div>
   )
