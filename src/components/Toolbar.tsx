@@ -1,4 +1,4 @@
-import { Eraser, Image as ImageIcon, Redo2, Trash2, Type, Undo2 } from 'lucide-react'
+import { Dices, Eraser, Image as ImageIcon, Redo2, Trash2, Type, Undo2 } from 'lucide-react'
 import { useRef } from 'react'
 import type { Copy } from '../i18n'
 import type { Level, Pattern } from '../lib/heatmap'
@@ -18,6 +18,7 @@ interface Props {
   onUndo: () => void
   onRedo: () => void
   onPattern: (pattern: Pattern) => void
+  onRandomize: () => void
   draft: Draft | null
   onDraftChange: (draft: Draft) => void
   onOpenText: () => void
@@ -38,7 +39,7 @@ const PATTERNS: Array<[Pattern, keyof Copy]> = [
 ]
 
 export function Toolbar({
-  copy, theme, brush, onBrush, canUndo, canRedo, onUndo, onRedo, onPattern,
+  copy, theme, brush, onBrush, canUndo, canRedo, onUndo, onRedo, onPattern, onRandomize,
   draft, onDraftChange, onOpenText, onPickImage, onCommitDraft, onCancelDraft,
   maxCharacters, maxOffset, textRejected,
 }: Props) {
@@ -82,6 +83,14 @@ export function Toolbar({
               {copy[key] as string}
             </button>
           ))}
+          <button
+            type="button"
+            className="chip with-icon"
+            onClick={onRandomize}
+            title={`${copy.random}  ·  R`}
+          >
+            <Dices size={14} /> {copy.random}
+          </button>
         </div>
 
         <div className="tool-group push-end">

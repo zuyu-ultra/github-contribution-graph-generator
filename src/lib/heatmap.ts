@@ -253,3 +253,46 @@ export function decodeMap(encoded: string, start: string): Heatmap {
   })
   return map
 }
+
+/**
+ * A one-off random year. Unlike the presets, which hash the date and so always
+ * produce the same picture, this rolls fresh every time. A slow random walk
+ * gives it busy stretches and quiet ones instead of uniform static.
+ */
+export function buildRandom(start: string, end: string): Heatmap {
+  const result: Heatmap = {}
+  const startDate = toDate(start)
+  const total = Math.max(0, diffDays(startDate, toDate(end)))
+
+  // Each roll gets its own personality.
+  const baseActivity = 0.3 + Math.random() * 0.45
+  const weekendDrop = 0.25 + Math.random() * 0.65
+  const heavyShare = 0.1 + Math.random() * 0.35
+  let momentum = Math.random()
+
+  for (let index = 0; index <= total; index += 1) {
+    const date = addDays(startDate, index)
+    const weekday = date.getDay()
+    const isWeekend = weekday === 0 || weekday === 6
+
+    momentum = Math.min(1, Math.max(0, momentum + (Math.random() - 0.5) * 0.22))
+    const chance = baseActivity * (0.45 + momentum) * (isWeekend ? 1 - weekendDrop : 1)
+
+    let level: Level = 0
+    if (Math.random() < chance) {
+      level = Math.random() < heavyShare
+        ? ((3 + Math.round(Math.random())) as Level)
+        : ((1 + Math.round(Math.random())) as Level)
+    }
+    result[formatDate(date)] = level
+  }
+
+  return result
+}
+
+/** What a first-time visitor sees: a plausible year with the name written into it. */
+export function buildDefaultDrawing(start: string, end: string, word: string): Heatmap {
+  const grid = buildGrid(start, end)
+  const base = buildPattern('natural', start, end)
+  return stampText(base, grid, word, 4, centerOffset(word, grid.weeks))
+}

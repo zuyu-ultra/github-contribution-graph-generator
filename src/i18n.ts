@@ -3,7 +3,7 @@ export type Language = 'en' | 'zh'
 export interface Copy {
   appName: string
   appTagline: string
-  localOnly: string
+  appSubtitle: string
   docsLink: string
   themeLabel: string
   languageLabel: string
@@ -25,6 +25,7 @@ export interface Copy {
   weekday: string
   wave: string
   ramp: string
+  random: string
   clear: string
   textTool: string
   imageTool: string
@@ -110,8 +111,8 @@ export const COPY: Record<Language, Copy> = {
   en: {
     // shell
     appName: 'Kusa',
-    appTagline: 'Draw a GitHub contribution graph, export a script you can read.',
-    localOnly: 'Runs entirely in your browser',
+    appTagline: 'Customise your GitHub contribution graph.',
+    appSubtitle: 'Backfill commits on any past date, or draw words and images into the grid. Kusa generates a Bash script that creates them — you read it, then you run it. Nothing leaves your browser.',
     docsLink: 'How GitHub counts contributions',
     themeLabel: 'Switch colour theme',
     languageLabel: 'Language',
@@ -120,9 +121,9 @@ export const COPY: Record<Language, Copy> = {
     stepDraw: 'Draw',
     stepConfigure: 'Configure',
     stepExport: 'Export',
-    stepDrawHint: 'Click and drag the grid, or start from a pattern.',
-    stepConfigureHint: 'Tell the script which repository to write to.',
-    stepExportHint: 'Read it, download it, run it.',
+    stepDrawHint: 'Click and drag the grid. Or start from a pattern, roll a random year, or write text.',
+    stepConfigureHint: 'Which repository the commits go to, and over which dates.',
+    stepExportHint: 'Read the script, download it, run it yourself.',
 
     // canvas
     brush: 'Brush',
@@ -135,6 +136,7 @@ export const COPY: Record<Language, Copy> = {
     weekday: 'Weekdays',
     wave: 'Wave',
     ramp: 'Ramp up',
+    random: 'Random',
     clear: 'Clear all',
     textTool: 'Text',
     imageTool: 'Image',
@@ -226,8 +228,8 @@ export const COPY: Record<Language, Copy> = {
 
   zh: {
     appName: 'Kusa 种草',
-    appTagline: '画一张 GitHub 贡献图，导出一份看得懂的脚本。',
-    localOnly: '全部在浏览器本地运行',
+    appTagline: '自定义你的 GitHub 贡献图。',
+    appSubtitle: '给任意过去的日期补上提交，或者把文字和图案画进格子里。Kusa 会生成一份创建这些提交的 Bash 脚本 —— 你先读一遍，再决定跑不跑。全程不联网。',
     docsLink: 'GitHub 贡献计入规则',
     themeLabel: '切换配色',
     languageLabel: '语言',
@@ -235,9 +237,9 @@ export const COPY: Record<Language, Copy> = {
     stepDraw: '绘制',
     stepConfigure: '配置',
     stepExport: '导出',
-    stepDrawHint: '在网格上点击或拖动，也可以从模板开始。',
-    stepConfigureHint: '告诉脚本要写入哪个仓库。',
-    stepExportHint: '读一遍，下载，运行。',
+    stepDrawHint: '在网格上点击或拖动。也可以套用模板、随机生成一年，或写入文字。',
+    stepConfigureHint: '提交写到哪个仓库，覆盖哪段日期。',
+    stepExportHint: '读一遍脚本，下载，自己运行。',
 
     brush: '画笔',
     brushHint: '拖动涂抹 · 按住 Alt 擦除',
@@ -249,6 +251,7 @@ export const COPY: Record<Language, Copy> = {
     weekday: '工作日',
     wave: '波浪',
     ramp: '渐强',
+    random: '随机',
     clear: '清空',
     textTool: '文字',
     imageTool: '图片',

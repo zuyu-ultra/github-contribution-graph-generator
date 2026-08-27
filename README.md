@@ -4,14 +4,17 @@
 
 # Kusa · 种草
 
-**Draw a GitHub contribution graph, export a Bash script you can actually read.**
+**Customise your GitHub contribution graph — backfill past commits, or draw
+words and images into the grid.**
 
-Kusa runs entirely in your browser. Nothing is uploaded — no passwords, no tokens,
-no repository settings, no images. It produces a plain shell script; you read it,
-then you decide whether to run it.
+Kusa turns a picture into a Bash script that creates the commits behind it. You
+read the script, then you decide whether to run it. Nothing is uploaded — no
+passwords, no tokens, no repository settings, no images ever leave your browser.
 
 [Report an issue](https://github.com/zuyu-ultra/github-contribution-graph-generator/issues)
 · [How GitHub counts contributions](https://docs.github.com/en/account-and-profile/reference/profile-contributions-reference)
+
+<img src="docs/screenshot.png" alt="Kusa, with the word KUSA drawn into a year of contributions">
 
 </div>
 
@@ -40,6 +43,7 @@ you already have.
 | Brushes | Five shades, selectable with <kbd>0</kbd>–<kbd>4</kbd> |
 | History | Undo / redo, 60 steps |
 | Patterns | Natural, dense, weekdays, wave, ramp up |
+| Random | Roll a fresh, never-repeating year with one click |
 | Text | Write words into the graph with a built-in 5×7 pixel font, positioned live |
 | Images | Import a picture and tune inversion and cut-off, sampled in your browser |
 
@@ -61,6 +65,7 @@ see exactly what you'll get.
 |---|---|
 | <kbd>0</kbd>–<kbd>4</kbd> | Select brush shade |
 | <kbd>Alt</kbd> + drag | Erase |
+| <kbd>R</kbd> | Roll a random year |
 | <kbd>⌘Z</kbd> / <kbd>Ctrl+Z</kbd> | Undo |
 | <kbd>⇧⌘Z</kbd> / <kbd>Ctrl+Shift+Z</kbd> | Redo |
 | <kbd>Esc</kbd> | Cancel the text or image tool |
